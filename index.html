@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=0,maximum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.bootcss.com/pure/1.0.1/pure-min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.common.dev.js"></script>
+    <title>Document</title>
+    <style>
+        button {
+            width: 100%;
+            height: 100%;
+        }
+
+        input {
+            width: 100%;
+            height: 100%;
+        }
+        
+        body {
+            color: gray;
+            font-size: 2rem;
+        }
+        .button-secondary {
+            color: white;
+            background: rgb(66, 184, 221); /* this is a light blue */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container pure-form">
+        <table style="height: 20em;width:10em;" id="main">
+            <tr>
+                <td colspan="4">
+                    <input type="text" disabled
+                        style="color: white;text-align: right;background-color: black;" class="text1"
+                        id="text1" v-model='result'>
+                </td>
+            </tr>
+            <tr>
+                <td><button class="pure-button button-secondary" id="ac" @click='Reset()'>AC</button></td>
+                <td><button class="pure-button button-secondary" id="zf" onclick="dojs(this)">+/-</button></td>
+                <td><button class="pure-button button-secondary" id="bfh" onclick="dojs(this)">%</button></td>
+                <td><button class="pure-button button-secondary" id="cy" onclick="dojs(this)">÷</button></td>
+            </tr>
+            <tr>
+                <td><button class="pure-button" id="b7" onclick="Number(this)">7</button></td>
+                <td><button class="pure-button" id="b8" onclick="Number(this)">8</button></td>
+                <td><button class="pure-button" id="b9" onclick="Number(this)">9</button></td>
+                <td><button class="pure-button button-secondary" id="bx" onclick="dojs(this)">x</button></td>
+            </tr>
+            <tr>
+                <td><button class="pure-button" id="b4" onclick="Number(this)">4</button></td>
+                <td><button class="pure-button" id="b5" onclick="Number(this)">5</button></td>
+                <td><button class="pure-button" id="b6" onclick="Number(this)">6</button></td>
+                <td><button class="pure-button button-secondary" id="b-" onclick="dojs(this)">-</button></td>
+            </tr>
+            <tr>
+                <td><button class="pure-button" id="b1" onclick="Number(this)">1</button></td>
+                <td><button class="pure-button" id='b2' onclick="Number(this)">2</button></td>
+                <td><button class="pure-button" id="b3" onclick="Number(this)">3</button></td>
+                <td><button class="pure-button button-secondary" id="b+" onclick="dojs(this)">+</button></td>
+            </tr>
+            <tr>
+                <td colspan="2"><button class="pure-button" id="b0" onclick="Number(this)">0</button></td>
+                <td><button class="pure-button" id="bd" onclick="dojs(this)">.</button></td>
+                <td><button class="pure-button pure-button-primary" id="bdy" onclick="dojs(this)">=</button></td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        var main = new Vue({
+            el: '#main',
+            data: {
+                result: 0,
+                number1: 0,
+                temp1: 0,
+                op: ''
+            },
+            methods: {
+                Reset: function () {
+                    main.result = 0;
+                    main.temp1 = 0;
+                    main.number1 = 0;
+                },
+            }
+        })
+        function Number(ele) {
+            if (main.result == 0) {
+                main.result = '';
+            }
+            if (main.result == '÷' || main.result == 'x' || main.result == '+' || main.result == '-' || main.result == 'error') {
+                main.result = ele.innerText;
+            }
+            else {
+                main.result += ele.innerText;
+            }
+        }
+        function dojs(ele) {
+            var bid = ele.id;
+            var btv = ele.innerText;
+            if (bid == 'zf') {
+                if (main.result == '÷' || main.result == 'x' || main.result == '+' || main.result == '-') {
+                    main.result = 'error';
+                }
+                else {
+                    if ((parseFloat(main.result)) > 0 || (parseFloat(main.result)) < 0) {
+                        main.result = (parseFloat(main.result)) * (-1);
+                    }
+                    else {
+                        main.result = 0;
+                    }
+                }
+            }
+            if (btv == '%') {
+                if (main.result == '÷' || main.result == 'x' || main.result == '+' || main.result == '-') {
+                    main.result = 'error';
+                }
+                else {
+                    main.result = parseFloat(main.result) / 100;
+                }
+            }
+            if (btv == '÷') {
+                if (main.number1 == 0) {
+                    main.number1 = parseFloat(main.result);
+                    main.temp1 = parseFloat(main.number1);
+                }
+                else {
+                    main.number1 = parseFloat(main.result);
+                    main.temp1 = parseFloat(main.temp1) / parseFloat(main.number1);
+                }
+                main.result = '÷';
+                main.op = '÷';
+            }
+            if (btv == 'x') {
+                if (main.number1 == 0) {
+                    main.number1 = parseFloat(main.result);
+                    main.temp1 = parseFloat(main.number1);
+                }
+                else {
+                    main.number1 = parseFloat(main.result);
+                    main.temp1 = parseFloat(main.temp1) * parseFloat(main.number1);
+                }
+                main.result = 'x';
+                main.op = 'x';
+            }
+            if (btv == '+') {
+                if (main.number1 == 0) {
+                    main.number1 = parseFloat(main.result);
+                    main.temp1 = parseFloat(main.temp1) + parseFloat(main.number1);
+                }
+                else {
+                    main.number1 = parseFloat(main.result);
+                    main.temp1 = parseFloat(main.temp1) + parseFloat(main.number1);
+                }
+                main.result = '+';
+                main.op = '+';
+            }
+            if (btv == '-') {
+                if (main.number1 == 0) {
+                    main.number1 = parseFloat(main.result);
+                    main.temp1 = parseFloat(main.number1) - parseFloat(main.temp1);
+                }
+                else {
+                    main.number1 = parseFloat(main.result);
+                    main.temp1 = parseFloat(main.temp1) - parseFloat(main.number1);
+                }
+                main.result = '-';
+                main.op = '-';
+            }
+            if (btv == '.') {
+                if (main.result == '÷' || main.result == 'x' || main.result == '+' || main.result == '-') {
+                    main.result = 'error';
+                }
+                else {
+                    main.result += '.';
+                }
+            }
+            if (btv == '=') {
+                if (main.result == '÷' || main.result == 'x' || main.result == '+' || main.result == '-') {
+                    main.result = 'error';
+                }
+                else {
+                    if (main.op == '+') {
+                        main.temp1 = parseFloat(main.temp1) + parseFloat(main.result);
+                    }
+                    if (main.op == '-') {
+                        main.temp1 = parseFloat(main.temp1) - parseFloat(main.result);
+                    }
+                    if (main.op == 'x') {
+                        main.temp1 = parseFloat(main.temp1) * parseFloat(main.result);
+                    }
+                    if (main.op == '÷') {
+                        if(main.result=='0'){
+                            main.temp1='error';
+                        }
+                        else{
+                            main.temp1 = parseFloat(main.temp1) / parseFloat(main.result);
+                        }
+                    }
+                    main.result = main.temp1;
+                }
+                main.temp1 = 0;
+                main.number1 = 0;
+                main.op = '';
+            }
+        }
+    </script>
+</body>
+
+</html>
